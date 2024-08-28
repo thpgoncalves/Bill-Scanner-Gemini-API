@@ -1,4 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
@@ -7,14 +10,14 @@ if (!apiKey) {
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
-export async function generateContentWithImage(imageUri: string): Promise<string> {
+export async function generateContentWithImage(imageUri: string, mimeType: string): Promise<string> {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const result = await model.generateContent([
       {
         fileData: {
-          mimeType: "image/jpeg",
+          mimeType: mimeType,
           fileUri: imageUri,
         },
       },
@@ -23,7 +26,11 @@ export async function generateContentWithImage(imageUri: string): Promise<string
 
     return result.response.text();
   } catch (error) {
-    console.error("Failed to generate content:", error);
+    if (error instanceof Error) {
+      console.error("Failed to generate content:", error.message);
+    } else {
+      console.error("Failed to generate content:", error);
+    }
     throw new Error('Failed to generate content');
   }
 }
