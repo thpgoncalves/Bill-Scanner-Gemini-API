@@ -15,3 +15,7 @@ export const checkExistingMeasurement = async (customer_code: string, measure_da
     measure_type,
   });
 };
+
+export const checkExistingMeasurementByUUID = async (measure_uuid: string) => {
+  return Measurement.findOne({ measure_uuid });
+};

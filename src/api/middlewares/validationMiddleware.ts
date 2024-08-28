@@ -5,6 +5,6 @@ export const validateUploadData = (data: any) => {
   if (!['WATER', 'GAS'].includes(data.measure_type.toUpperCase())) {
     return 'Invalid measure_type';
   }
-  // Adicionar outras validações conforme necessário
+  // Adicionar outras validações se precisar
   return null;
 };

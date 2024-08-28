@@ -7,6 +7,7 @@ export interface IMeasurement extends Document {
   measure_type: string;
   value: number;
   image_link: string;
+  confirmed: boolean;
 }
 
 const MeasurementSchema: Schema = new Schema({
@@ -16,6 +17,7 @@ const MeasurementSchema: Schema = new Schema({
   measure_type: { type: String, required: true, enum: ['WATER', 'GAS'] },
   value: { type: Number, required: true },
   image_link: { type: String, required: true },
+  confirmed: { type: Boolean, default: false }
 });
 
 export const Measurement = mongoose.model<IMeasurement>('Measurement', MeasurementSchema);
