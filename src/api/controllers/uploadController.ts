@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { saveMeasurement, checkExistingMeasurement } from '../services/measureService'
+import { saveMeasurement, checkExistingMeasurement } from '../services/measureService';
 import { validateUploadData } from '../middlewares/validationMiddleware';
+import { extractValueFromImage } from '../services/llmService';
 
 export const uploadImage = async (req: Request, res: Response) => {
   try {
@@ -18,8 +18,7 @@ export const uploadImage = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Measurement already exists for this month and type.' });
     }
 
-    const response = await axios.post('https://api.gemini.com/llm/extract', { image });
-    const { extracted_value } = response.data;
+    const extracted_value = await extractValueFromImage(image);
 
     const measure_uuid = uuidv4();
     const image_link = `https://yourstorage.com/images/${measure_uuid}`;
@@ -31,6 +30,7 @@ export const uploadImage = async (req: Request, res: Response) => {
       measure_type,
       value: extracted_value,
       image_link,
+      confirmed: false, 
     });
 
     return res.status(200).json({
