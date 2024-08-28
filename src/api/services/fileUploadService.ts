@@ -1,9 +1,12 @@
 import { GoogleAIFileManager } from "@google/generative-ai/server";
+import dotenv from 'dotenv';
 import path from 'path';
+
+dotenv.config()
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
-  throw new Error('API_KEY is not set in the environment variables');
+  throw new Error('GEMINI_API_KEY is not set in the environment variables');
 }
 
 const fileManager = new GoogleAIFileManager(apiKey);
