@@ -3,8 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { saveMeasurement, checkExistingMeasurement } from '../services/measureService';
 import { validateUploadData } from '../middlewares/validationMiddleware';
 import { extractValueFromImage } from '../services/llmService';
+import { uploadImage } from '../services/fileUploadService';
+import { generateContentWithImage } from '../services/generateContentService';
 
-export const uploadImage = async (req: Request, res: Response) => {
+export const uploadImageAndGenerateContent = async (req: Request, res: Response) => {
   try {
     const { image, customer_code, measure_datetime, measure_type } = req.body;
 
@@ -13,12 +15,19 @@ export const uploadImage = async (req: Request, res: Response) => {
       return res.status(400).json({ error: validationError });
     }
 
-    const existingMeasurement = await checkExistingMeasurement(customer_code, measure_datetime, measure_type);
+    const measureDate = new Date(measure_datetime);
+    if (isNaN(measureDate.getTime())) {
+      return res.status(400).json({ error: 'Invalid date format.' });
+    }
+
+    const existingMeasurement = await checkExistingMeasurement(customer_code, measureDate, measure_type);
     if (existingMeasurement) {
       return res.status(400).json({ error: 'Measurement already exists for this month and type.' });
     }
 
-    const extracted_value = await extractValueFromImage(image);
+    const uploadedImageUri = await uploadImage(image);
+
+    const extracted_value = await generateContentWithImage(uploadedImageUri);
 
     const measure_uuid = uuidv4();
     const image_link = `https://yourstorage.com/images/${measure_uuid}`;
@@ -26,11 +35,11 @@ export const uploadImage = async (req: Request, res: Response) => {
     await saveMeasurement({
       measure_uuid,
       customer_code,
-      measure_datetime,
+      measure_datetime: measureDate, 
       measure_type,
       value: extracted_value,
       image_link,
-      confirmed: false, 
+      confirmed: false,
     });
 
     return res.status(200).json({

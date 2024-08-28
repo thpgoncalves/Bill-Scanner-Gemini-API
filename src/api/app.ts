@@ -3,11 +3,14 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import uploadRoutes from './routes/uploadRoutes';
 import confirmRoutes from './routes/confirmRoutes';
+import connectDB from './models/database';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+connectDB();
 
 app.use(cors());
 app.use(express.json());
