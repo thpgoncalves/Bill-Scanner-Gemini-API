@@ -5,18 +5,15 @@ export const confirmMeasurement = async (req: Request, res: Response) => {
   try {
     const { measure_uuid, confirmed_value } = req.body;
 
-    // Verifica se o código de leitura informado existe
     const existingMeasurement = await checkExistingMeasurementByUUID(measure_uuid);
     if (!existingMeasurement) {
       return res.status(404).json({ error: 'Measurement not found.' });
     }
 
-    // Verifica se o código de leitura já foi confirmado
     if (existingMeasurement.confirmed) {
       return res.status(400).json({ error: 'Measurement is already confirmed.' });
     }
 
-    // Atualiza o valor confirmado e marca como confirmado
     existingMeasurement.value = confirmed_value;
     existingMeasurement.confirmed = true;
     await saveMeasurement(existingMeasurement);
