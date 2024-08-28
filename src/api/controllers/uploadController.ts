@@ -4,7 +4,6 @@ import { saveMeasurement, checkExistingMeasurement } from '../services/measureSe
 import { validateUploadData } from '../middlewares/validationMiddleware';
 import { extractValueFromImage } from '../services/llmService';
 import { uploadImage } from '../services/fileUploadService';
-import { generateContentWithImage } from '../services/generateContentService';
 
 export const uploadImageAndGenerateContent = async (req: Request, res: Response) => {
   try {
@@ -12,25 +11,34 @@ export const uploadImageAndGenerateContent = async (req: Request, res: Response)
 
     const validationError = validateUploadData(req.body);
     if (validationError) {
-      return res.status(400).json({ error: validationError });
+      return res.status(400).json({ 
+        error_code: "INVALID_DATA", 
+        error_description: validationError 
+      });
     }
 
     const measureDate = new Date(measure_datetime);
     if (isNaN(measureDate.getTime())) {
-      return res.status(400).json({ error: 'Invalid date format.' });
+      return res.status(400).json({ 
+        error_code: "INVALID_DATA", 
+        error_description: 'Invalid date format.' 
+      });
     }
 
     const existingMeasurement = await checkExistingMeasurement(customer_code, measureDate, measure_type);
     if (existingMeasurement) {
-      return res.status(400).json({ error: 'Measurement already exists for this month and type.' });
+      return res.status(409).json({ 
+        error_code: "DOUBLE_REPORT", 
+        error_description: 'Leitura do mês já realizada.' 
+      });
     }
 
     const uploadedImageUri = await uploadImage(image);
 
-    const extracted_value = await generateContentWithImage(uploadedImageUri);
+    const extracted_value = await extractValueFromImage(uploadedImageUri);
 
     const measure_uuid = uuidv4();
-    const image_link = `https://yourstorage.com/images/${measure_uuid}`;
+    const image_link = uploadedImageUri;
 
     await saveMeasurement({
       measure_uuid,
@@ -43,12 +51,15 @@ export const uploadImageAndGenerateContent = async (req: Request, res: Response)
     });
 
     return res.status(200).json({
+      image_url: image_link,
+      measure_value: extracted_value,
       measure_uuid,
-      image_link,
-      extracted_value,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Failed to process the image.' });
+    return res.status(500).json({ 
+      error_code: "INTERNAL_ERROR", 
+      error_description: 'Failed to process the image.' 
+    });
   }
 };

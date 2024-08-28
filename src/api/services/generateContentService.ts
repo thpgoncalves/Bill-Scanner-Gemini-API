@@ -9,7 +9,7 @@ const genAI = new GoogleGenerativeAI(apiKey);
 
 export async function generateContentWithImage(imageUri: string): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const result = await model.generateContent([
       {
@@ -18,12 +18,12 @@ export async function generateContentWithImage(imageUri: string): Promise<string
           fileUri: imageUri,
         },
       },
-      { text: "Descreva como este produto pode ser fabricado." },
+      { text: "Get the measure value and the measure uuid." },
     ]);
 
     return result.response.text();
   } catch (error) {
-    console.error("Erro ao gerar conteúdo:", error);
+    console.error("Failed to generate content:", error);
     throw new Error('Failed to generate content');
   }
 }
