@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/measurements', {
-
       serverSelectionTimeoutMS: 5000, 
       socketTimeoutMS: 45000,       
     });
@@ -14,4 +13,14 @@ const connectDB = async () => {
   }
 };
 
+const disconnectDB = async () => {
+  try {
+    await mongoose.disconnect();
+    console.log('MongoDB disconnected successfully');
+  } catch (error) {
+    console.error('MongoDB disconnection error:', error);
+  }
+};
+
 export default connectDB;
+export { disconnectDB };
