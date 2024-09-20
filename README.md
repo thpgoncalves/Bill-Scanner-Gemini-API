@@ -6,7 +6,7 @@
 
 ## About The Project
 
-This project is a RESTful architecture project, with the function of reading bills via the Gemini API, to interpret these images and extract measurement results and other specific fields, where the interpretation of the results is saved in MongoDB.
+This project is a Backend RESTful architecture project, with the function of reading bills via the Gemini API, to interpret these images and extract measurement results and other specific fields, where the interpretation of the results is saved in MongoDB.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
