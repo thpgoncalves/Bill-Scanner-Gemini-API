@@ -32,7 +32,7 @@ This project is a Backend RESTful architecture project, with the function of rea
 
 #### Create an “.env” file in the root. In this file define the variable “GEMINI_API_KEY” and enter your key for using the Gemini API (Do not share your key in public files or with other people so as not to generate undue charges).
 
-#### Once this has been set, you can check Gemini's documentation to understand how to access the correct endpoints. For this specific application, I'm using the URL provided in the documentation to upload photos. Be aware that this link may change with future updates to Gemini or the documentation.
+#### Once this has been set, you can check Gemini's documentation to understand how to access the correct endpoints. For this specific application, I'm using the URL provided in the documentation to upload photos. Be aware that this link may change with future Gemini updates.
 
 #### Path to define the endpoint if you need to make changes: src/api/services/llmService.ts
 
