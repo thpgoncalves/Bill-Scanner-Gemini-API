@@ -47,7 +47,7 @@ This project is a Backend RESTful architecture project, with the function of rea
 - PATCH /confirm
 - GET /customer_code/list
 
-#### If you have any problems, you can use the “npm run test” command to run unit and integration tests to better understand where the problem lies.
+#### If you have any problems, you can use the “npm run test” command to run unit and integration tests to better understand where the problem is.
 
 <!-- CONTACT -->
 ## Contact
